@@ -159,6 +159,8 @@ System.out.println(i);
 // Hibaüzenet
 ```
 
+Ha egy paraméter vagy egy locális változó megegyezik egy mezővel, akkor a név mindig a paramétert vagy változóüt fogja jelenteni. Ennek kiküszöbölése képpen használjuk a `this` kulcsszót. A `this` az aktuális példányra referál.
+Ehhez hasonló a `super`, ami az aktuális példány őspéldányára mutat.
 A konstruktorokat hívási láncba lehet szervezni, a `this` és a `super` kulcsszavak segítségével. Ilyenkor az egyik kulcsszónak kell lennie az első szónak. Saját konstruktort úgy kell hívni, hogy `this(current, parameter, list)`, illetve ősnek konstruktorát úgy, hogy `super(current, parameter, list)`.
 
 Tegyük fel, hogy 4 mezőből 2 elhagyható. Ilyenkor szokás csinálni egy 4 paraméteres konstruktort, illetve egy 2 paraméterest ami meghívja a 4 paraméterest.
@@ -189,3 +191,82 @@ class Rectangle {
     }
 }
 ```
+
+Általában vagy egy konstruktor ami beállítja az összes mezőt, és azt azt követő kevesebb paraméterrel rendelkező konstruktorok pedig azt hívják.
+
+Példa:
+```java
+class Gerinces {
+    protected double suly;
+
+    public Gerinces(double suly) { // <- 2.
+        this.suly = suly; // <- 3. (suly értéke 52.0)
+    } // <- 4. (visszakapja a main)
+}
+
+class Kutya extends Gerinces {
+    String nev;
+
+    public Kutya(String nev, double suly) { // <- 8.
+        this.nev = nev; // <- 9. (nev erteke "Buksi")
+        super.suly = suly; // <- 10. (suly erteke 20.0)
+        /*
+        * De lehetne
+        * this.suly = suly;
+        * vagy
+        * super(suly);
+        */
+    } // <- 11. (ismét visszakapja a main)
+
+    public Kutya(String nev) { // <- 6.
+        this(nev, 20.0); // <- 7.
+    }
+}
+
+class Main {
+    public static void main(String[] args) {
+        Gerinces g1 = new Gerinces(52); // <- 1.
+        Kutya k1 = new Kutya("Buksi"); // <- 5.
+    } // <- 12. (vége a programnak)
+}
+```
+
+Azt a `Kutya`-t amit létrehozunk, használhatjuk `Gerinces`-ként is, és `Object`-ként is a többalakúság miatt. 
+
+## Megváltoztathatóság *(mutability)*
+Általában minden mezőhöz csinálunk *getter*-t és *setter*-t.
+Ha egy mező neve `suly` akkor a getter `getSuly` és a setter neve `setSuly`.
+
+```java
+public String getNev() {
+    return this.nev;
+}
+```
+
+```java
+public void setNev(String nev) {
+    this.nev = nev;
+}
+```
+
+Ennek az az értelme, hogy a belső állapotot felülírom. **Csak saját metódussal, belülről módosíthatom a belső állapotot, mert az egységbezárás miatt védenem kell az adatot.** Érdemes nem minden érdemes nem statikus, publicus mezőt csinálni.
+Onnantól kezdve, hogy vagy egy setter az osztályon belül, az adott osztály már nem immutable. Ha egy olyan osztályt kell létre hozni amit meg lehet változtatni, de mégis immutable, akkor egy trükköt kell alkalmazni. A trükk pedig az, hogy új példányt hozok létre a `new` kulcsszóval. Szintaxis: `new Osztaly();`.
+Itt a setter visszaadja az új, módosított osztályt.
+
+```java
+public Kutya setNev(String nev) {
+    return new Kutya(nev, this.suly);
+}
+```
+
+**A `new` kuclsszó megfelelő mennyiségű helyet foglal a dinamikus memóriában.** Pontosan annyi helyet foglal, ami megfelelő az adott adattípusnak. Java-ban a `new`-nak nincs párja, ami felszabadítja a memóriát, ehelyett, a szemétgyűjtő *(garbage collector)* szabadítja fel. Az indok erre az egyszerűség.
+A `new` lefutattja ezután a konstruktort, aztán visszaadja a referenciát a lefoglalt területre.
+
+> ### Feladat
+> Esszé: **Programming in small vs. programming in large**
+
+### Automatikus memória allokáció a Java-ban:
+| Technikai név | Magyar név | Tartalom              |
+| ------------- | ---------- | --------------------- |
+| STACK         | verem      | pl.: lokális változók |
+| HEAP          | halom      | dinamikus memória     |
