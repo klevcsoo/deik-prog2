@@ -17,7 +17,6 @@ public class Main {
         System.out.println(hallgatoCintia);
         System.out.println(oktatoGabor);
 
-
         Szemely szemelyTamas2 = new Szemely("Tamás", 25, true);
         Hallgato hallgatoCintia2 = new Hallgato("Cintia", 19, false, 4.2);
         Hallgato hallgatoViktoria = new Hallgato("Viktória", 18, false, 3.8);
@@ -27,8 +26,17 @@ public class Main {
         System.out.println(hallgatoCintia.equals(hallgatoCintia2));
         System.out.println(hallgatoCintia.equals(hallgatoViktoria));
 
-        System.out.println();
-        System.out.println(hallgatoCintia.joTanulo());
-        System.out.println(hallgatoViktoria.joTanulo());
+        Egyetem egyetem = new Egyetem();
+        egyetem.addHallgato(hallgatoCintia);
+        egyetem.addHallgato(hallgatoViktoria);
+        egyetem.addHallgato(new Hallgato("Dávid", 22, true, 4.0));
+        egyetem.addHallgato(new Hallgato("Klaudia", 28, false, 4.7));
+        egyetem.addHallgato(new Hallgato("Zsolt", 18, true, 3.9));
+        egyetem.addOktato(oktatoGabor);
+
+        System.out.println("\nJó tanulók:");
+        for (var hallgato : egyetem.getJoTanulok()) {
+            System.out.println(hallgato);
+        }
     }
 }
