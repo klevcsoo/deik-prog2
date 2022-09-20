@@ -1,3 +1,5 @@
+package labor1;
+
 import java.util.Objects;
 
 public class Player {
@@ -64,7 +66,7 @@ public class Player {
 
     @Override
     public String toString() {
-        return "Player{" +
+        return "labor1.Player{" +
                 "name='" + name + '\'' +
                 ", health=" + health +
                 ", armour=" + armour +

@@ -1,3 +1,5 @@
+package labor1;
+
 public class Car {
     private String numberPlate;
     private int performance;
@@ -39,7 +41,7 @@ public class Car {
 
     @Override
     public String toString() {
-        return "Car info: %s (performance: %s, transmission: %s)".formatted(
+        return "labor1.Car info: %s (performance: %s, transmission: %s)".formatted(
                 this.numberPlate,
                 this.performance,
                 this.automatic ? "automatic" : "manual"

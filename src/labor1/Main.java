@@ -1,7 +1,11 @@
+package labor1;
+
+import labor1.Car;
+
 public class Main {
     public static void main(String[] args) {
-//        Player player1 = new Player("Tom", 100, 50, 0, 0);
-//        Player player2 = new Player("David", 100, 50, 0, 0);
+//        labor1.Player player1 = new labor1.Player("Tom", 100, 50, 0, 0);
+//        labor1.Player player2 = new labor1.Player("David", 100, 50, 0, 0);
 //
 ////        Hash comparison
 //        System.out.println(player1);
