@@ -380,3 +380,247 @@ a referenciát a lefoglalt területre.
 |---------------|------------|-----------------------|
 | STACK         | verem      | pl.: lokális változók |
 | HEAP          | halom      | dinamikus memória     |
+
+## Öröklődés részletesebben
+
+Java-ban minden osztálynak van ősosztálya, ezalól
+kivétel `Object` osztály. **Java-ban minden metódus
+virtuális azaz felülírható**, erre külön kulcssó nincs.
+A virtuális metódusok kötése késői kötéssel történik
+_(late binding)_. Az számít, hogy a referencia hova
+mutat, nem az, hogy hol van.
+
+```java
+class Main {
+    public static void main() {
+        Kutya k1 = new Vadaszkutya();
+    }
+}
+```
+
+A felső részlet akkor helyes, ha a `Vadászkutya`
+gyermeke a `Kutya` osztálynak. Ez a részlet létre hoz
+egy referenciát a `k1`-re. A `new Vadaszkutya()` lefoglal
+a
+dinamikus memóriában egy `Vadaszkutya` példányt, ahol
+ennek a `Vadaszkutya` példánynak a belső állapotát
+tárolja.
+Visszaadja a referenciát erre a memóriaterületre, amit
+megkap a `k1`; Így a példányt a `Kutya` felületén
+keresztül nézem, de attól még a példány `Vadászkutya`;
+
+```java
+class Main {
+    public static void main() {
+        Kutya k1 = new Vadaszkutya();
+        k1.ugat();
+    }
+}
+```
+
+Ha körai kötés lenne, azaz az `ugat` metódis nem lenne
+virtuális, akkor a `Kutya` osztály `ugat` metódusa futna
+le. De mivel Java-ban minden metódus virtuális, ezért a
+`Vadaszkutya`-nak az `ugat` metódusa fut le.
+
+- milyen felületen keresztül nézem: **statikus**
+- milyen felületre mutat: **dinamikus**
+
+> Ismétlés: `new` után constructor hívás
+
+A fennti példában `k1`:
+
+- statikus típusa: **`Kutya`**
+- dinamikus típusa: **`Vadaszkutya`**
+
+```java
+class Main {
+    public static void main() {
+        Kutya k1 = new Vadaszkutya();
+        k1.ugat();
+
+        k1 = new Oleb();
+        k1.ugat();
+    }
+}
+```
+
+A legutóbbi példában a `k1`:
+
+- statikus típusa: **`Kutya`**
+- dinamikus típusa: **`Oleb`**
+
+Az `ugat` metódus az `Oleb` osztályból fut le, mert
+késői kötés van.
+
+### @Override
+
+> Java régebbi verzióiban nem volt `@Override`, ezért ez
+> nem kulcsszó, hanem programozói paradigma _(annotation)_
+> .
+
+```java
+class Kutya {
+    public String ugat() {
+        return "vau vau";
+    }
+}
+
+class VadaszKutya extends Kutya {
+    @Override
+    public String ugat() {
+        return "vau vau vau";
+    }
+}
+
+class Main() {
+    public static void main() {
+        Kutya k1 = new VadaszKutya();
+        System.out.println(k1.ugat());
+//        vau vau vau
+    }
+}
+```
+
+**Amit most csináltunk, az megszegi az OCP alapelveit.**
+Az OCP alapelv az a SOLID alapelvek egyike. Az OCP
+azt mondja:<br/>
+_"Ne használd a ~~kibaszott~~ @Override annotációt,
+mert ~~kibaszott~~ veszélyes, csak absztrakt metódus és
+hook felülírására használd."_
+
+> A hook metódus olyan metódus aminek van törzse, de a
+> törzse üres, vagy csak egy return van benne. A hook-ba
+> tesszük az opcionális viselkedést.
+
+Az @Override-ot használni azért veszélyes, mert az
+**öröklődés a legerősebb kapcsolat ami két osztály között
+lehetséges**. Ami megkeseríti az életünket, az az
+implemetation dependency. **Ha ez egyik osztályt
+megváltoztatom, és vele implementációs függőségben van
+egy másik osztály, akkor azt a másik osztályt is meg
+kell változtatni.**
+
+Az öröklődést szokták **"fehérdobozos
+újrahasznosításnak"**
+hívni _(white box reuse)_. Az OOP alapértéke az
+újrahasznosíthatóság. Ha megírunk egy osztályt, aminek
+kicsi mellékhatása van, akkor azt fel lehet használni
+más helyeken is.
+
+Akkor mondjuk, hogy **white box**, ha ismerjük a
+forráskódot, ezzel ellentétben a **black box** esetén
+nem ismerjük a forráskódot. Testing esetén mindkét
+esetben ismerem a specifikációt.
+
+Az a baj, hogy általában ismerem az ősnek a forráskódját,
+szóval a gondolkodásmenet: rövid és gyorsan futó
+programot szeretnék, amit elegánsnak érzek. **De attól a
+perctől, hogy kihasználom, hogy az ős hogyan van
+implementálva, attól a perctől a két osztály
+implementációs függőségben van.**
+
+Erre a megoldást úgy nevezik, hogy **GOF1** _(gang of
+four)_.
+
+> A GOF könyv alatt a _Programtervezési minták_ című
+> könyvet
+> értjük. Magyarul: _"méhecskés könyv"_.
+
+**GOF1:** programozz felületre megvalósítás helyett, azaz
+programozz úgy, hogy nem ismernéd a program többi
+részének nem ismernéd a forráskódját, csak a felületét.
+
+> Ebben a félévben az öröklődés a legjobb dolog a
+> világon. Utána szar lesz.
+
+**Az `@Override`-ot könnyű összekeverni az
+_overloading_-al. Overloading esetén más lesz a
+szignatúra.** Ha a szignatúrája alapjána fordító meg
+tudja különböztetni akkor szabad.<br/>
+Az overload-nak nincs kulcsszava, egész egyszerűen
+újra írom a függvényt más szignatúrával.<br/>
+**Az override-nak sem muszáj használni az annotációját,
+nem generál error-t, csak warning-ot.**
+
+A _long literal_ úgy néz ki, hogy `0L`, azaz szám után
+egy nagy L betű.
+
+### Az öröklődés megtiltása
+
+Java-ban az öröklődést megtilthatom a `final`
+kulcsszóval. Ha azt mondom, hogy `final class Kutya {}`,
+akkor a `Kutya`-nak nem lehetnek leszármazottjai.
+
+> Ha egy mező elé írjuk, hogy `final`, akkor az a mező
+> konstans. C#-ban úgy mondjuk, hogy _le van pecsételve_
+> az osztály, azaz _the class is **sealed**_.
+
+Például `String`-ből nem lehet örökölni. A polimofizmus
+miatt bármelyik alosztályt lehetne adni oda, ahol valami
+`String`-et vár. Ez nem biztonságos.
+
+Ha nem `final` az osztály, akármennyi gyermeke lehet.
+
+## Absztrakt osztály
+
+Absztrakt osztály szintaxisa: `abstract class Kutya`.
+Ezekből nem lehet származtatni más osztályt, de ettől
+még lehet konstruktora.
+
+Kettő tulajdonsága van:
+
+- van felülete
+- és **lehet** megvalósítása
+
+A különbség a _lehet_ szóban van, az absztrakt
+osztálynak nem muszáj, megvalósítást létrehozni.
+Absztrakt osztályban lehet absztrakt metódus. Ennek
+ugyanúgy a kulcsszava az `abstract`, nincs törzse csak
+feje.
+
+```java
+public abstract class Kutya {
+    public abstract String ugat();
+}
+```
+
+A viselkedés kidolgozását ráhagytam a
+gyermekosztályokra. Csak azt mondtam meg, hogy a kutya
+tud ugatni, de azt nem, hogy hogyan. **A nem absztrakt
+gyermekosztályoknak az ős minden absztrakt metódusát
+ki kell dolgoznia**, azaz a `VadászKutya`-nak meg kell
+mondania, hogy ő hogyan ugat, az `@Override` annotáció
+segítségével.
+
+- A `VadaszKutya`-nak ki kell dolgoznia az `ugat`
+  metódust.
+- A `VadaszKutya`-nak meg kell adnia az `ugat` metódus
+  viselkedését.
+
+Egy absztrakt osztályban lehet absztrakt és
+kidolgozott metódus is, de absztrakt metódus csak
+absztrakt osztályban lehetséges. Ez azt jelenti, hogy
+a metódusnak van szerződése, törzse nincs.
+
+### Szerződés alapú programozás
+
+**DESIGN BY CONTRACT**<br/>
+Minden metódusnak van elő- és utófeltétele. Az
+előfeltétel megmondja, milyen paramétereket vár, az
+utófeltétel megmondja, milyen értéket ad vissza.
+
+### Az `Object` főosztály
+
+Az `Object`-ból rengeteg dolgot örököl az osztály.
+Minden hierarchia tetején az `Object` osztály áll.
+
+- **`toString`**: a belső állapotot `String` ként
+  reprezentálva visszaadja
+- **`equals`**: két objektum összehasonlítása, akkor
+  ad igazat, ha a két példány belső állapota ugyan az
+  (`Object`-et kap paraméterként)
+- **`hashCode`**
+- **`clone`**: létrehozz egy ugyan olyan belső
+  állapotú objektumot, de egy másik memóriaterületen
+  (`Object`-et ad visszatérési értékként)
