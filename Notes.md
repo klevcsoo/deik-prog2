@@ -624,3 +624,237 @@ Minden hierarchia tetején az `Object` osztály áll.
 - **`clone`**: létrehozz egy ugyan olyan belső
   állapotú objektumot, de egy másik memóriaterületen
   (`Object`-et ad visszatérési értékként)
+
+## Belső osztály
+
+```java
+class A {
+    class B {
+    }
+}
+```
+
+Külső osztály lehet `public` és `package` láthatósági
+szintű, külső osztály nem lehet `private` sem `protected`,
+sem statikus. Ugyanakkor, a külső osztály lehet
+`abstract` és `final`.
+
+> #### Vizsgakérdés:
+> **Lehet-e külső osztály `final abstract`?**<br/>
+> Nem, mert a külső osztály ha nincs kidolgozva és a
+> gyermekre marad a kidolgozás, akkor nem lehet
+> `final`, mert annak nem lehet gyermeke.
+
+A `final` kulcsszóval
+
+- konstansot lehet vele csinálni, ha mező előtt áll
+- lezárt osztályt lehet csinálni vele, aminek nem
+  lehet gyermeke
+- olyan metódust lehet csinálni vele, amit nem lehet
+  felülírni.
+
+A konstans létrehozása: `public static final`. Azért
+nem csinálunk `public` mezőt, hogy véletlenül nehogy
+globális változót csináljunk. Ha valami `public
+static`, akkor az globális változó.
+
+```java
+class SzorosKiskutya {
+    public static final int I;
+}
+
+class Main {
+    public static void main(String[] args) {
+        System.out.println(SzorosKiskutya.I);
+    }
+}
+```
+
+Ha egy globális változó értékét megváltoztatjuk, akkor
+az **mellékhatás**, ami nehezen megtalálható hibákhoz
+vezethet.
+
+Ha példány szintű konstanst csinálunk, akkor nem kell
+`static` elé. Ilyenkor nem muszáj megadni az értékét
+egyből, az történhet a konstruktorban is.
+
+A statikus
+blokk kulcsszava a `static`, de utána egyből `{`
+karakter indul. Ez lefut az osztály betöltődésekor, de
+csak akkor (program futása kezdetén). Ezt arra
+használjuk, hogy a statikus mezőknek értéket adjunk.
+
+```java
+class Kutya {
+
+    // osztály szintű konstans
+    public static final int LABAK_SZAMA;
+
+    static {
+        LABAK_SZAMA = 4;
+    }
+}
+```
+
+Absztakt esetben:
+
+```java
+abstract class Cica {
+    private String nyavogas;
+    private double ehsegSzint;
+
+    public Cica() {
+        this.ehsegSzint = 10;
+    }
+
+    public abstract void setNyavogas(String x);
+}
+
+class Main {
+    public static void main(String[] args) {
+        Cica c1 = new Cica(); // hiba
+        // Absztrakt osztályból nem lehet példányt 
+        // csinálni
+
+        Cica c2 = new Cica() {
+            @Override
+            public void setNyavogas(String x) {
+                System.out.println("miau");
+            }
+        };
+    }
+}
+```
+
+**Absztakt osztályból, ha példányosítani akarunk, akkor
+a példány deklarálásának konstruktora után felül kell
+írni az absztakt metódusokat.**
+
+### Ténylegesen akkor a belső osztályokról
+
+Belső osztályt azért hozzuk létre, mert kell egy
+adatszerkezet, amelyhez senkinek semmi köze.
+
+**Például:**<br/>
+Kivülről vannak _x_ és _y_ koordinátáim, amik
+nincsenek összefogva kívülről, de belülről igen.
+
+Akkor érdemes **nem** statikussá tenni a belső
+osztályt, ha nem kell, hogy hozzáférjen a külső
+osztály belső állapotához. **De amúgy mindig jobb ötlet
+valamilyen módon statikus belső osztályt csinálni.**
+
+```java
+import java.util.ArrayList;
+import java.util.List;
+
+class Gorbe {
+    private static class Pont {
+        // mivel nem tárolunk semmit itt ami a Gorbe
+        // osztály belső állapotához kapcsolódna,
+        // ez az osztály lehet static
+        public double x, y;
+    }
+
+    private List<Pont> feszitoPontok = new ArrayList<>();
+
+    public void ujFeszitopont(double x, double y) {
+        Pont p1 = new Pont();
+        p1.x = x;
+        p1.y = y;
+        this.feszitoPontok.add(p1);
+    }
+}
+```
+
+> Belső osztályban nyugodtan lehet publikus mezőt
+> csinálni főleg, ha a belső osztály privát.
+
+Jövőbe tekintve fontos:
+
+- generikus adatszerkezet: `GenericClass<Type>`
+- `Collection`
+- konténerosztály
+
+#### Csináljunk hülyeséget!
+
+Rákényszerítjuk a program többi részét, hogy a `Pont`
+osztályt használja két `double` helyett.
+
+1. Publikussá teszem a belső, `Pont` osztályt
+2. Nem statikussá teszem a `Pont` osztályt
+3. Az `ujFeszitopont` metódus paramétere `Pont` típusú
+   lesz
+
+```java
+import java.util.ArrayList;
+import java.util.List;
+
+class Gorbe {
+    public class Pont {
+        public double x, y;
+    }
+
+    private List<Pont> feszitoPontok = new ArrayList<>();
+
+    public void ujFeszitopont(Gorbe.Pont p) {
+        this.feszitoPontok.add(p);
+    }
+}
+
+class Main {
+    public static void main(String[] args) {
+        Gorbe g1 = new Gorbe();
+
+        // nem statikus belső osztály
+        // rákényszerítem a belső állapotot a világra
+        // hülyeség, undorító syntax
+        Gorbe.Pont p1 = g1.new Pont();
+        p1.x = 3.0;
+        p1.y = 2.0;
+
+        g1.ujFeszitopont(p1);
+    }
+}
+```
+
+#### Mi van akkor, ha nem lehet statikus a belső osztály?
+
+```java
+class Kiskutya {
+    class X {
+        public double c;
+        public long tick;
+
+        public void update() {
+            // emiatt nem lehet X statikus,
+            // felhasználja a külső osztály ezen 
+            // példányának belső állapotát (a és b mező)
+            this.c = a + b;
+        }
+    }
+
+    private double a, b;
+
+    // ha nem initializáljuk az ido mezőt,
+    // akkor NullPointerException-t kapunk
+    private X ido = new X();
+
+    public void tellikAzIdo() {
+        this.ido.tick++;
+        this.ido.update();
+    }
+}
+```
+
+> #### Vizsgakérdés:
+> **Mit jelent az, hogy a felületre ki van vezetve egy
+> szolgáltatás?**<br/>
+> A felületre ki van vezetve egy publikus szolgáltatás
+> metódus.
+
+## Kivételkezelés
+
+## Generikus osztályok
+
+## Konténerek
