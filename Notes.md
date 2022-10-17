@@ -61,7 +61,7 @@ public class Kutya {
 }
 
 public class Prog2 {
-    public static void main() {
+    public static void main(String[] args) {
         Kutya k1 = new Kutya();
         System.out.println(k1.getNev());
     }
@@ -122,7 +122,7 @@ public class Kutya {
 }
 
 public class Prog2 {
-    public static void main() {
+    public static void main(String[] args) {
         Kutya k1 = new Kutya();
         System.out.println(k1.getNev());
     }
@@ -179,7 +179,7 @@ public class Kutya {
 }
 
 public class Prog2 {
-    public static void main() {
+    public static void main(String[] args) {
         Kutya k1 = new Kutya();
         System.out.println(k1.getNev());
         // > Buski
@@ -216,7 +216,7 @@ mezőt igen**.
 
 ```java
 class Main {
-    public static void main() {
+    public static void main(String[] args) {
         int i;
         System.out.println(i);
     }
@@ -392,7 +392,7 @@ mutat, nem az, hogy hol van.
 
 ```java
 class Main {
-    public static void main() {
+    public static void main(String[] args) {
         Kutya k1 = new Vadaszkutya();
     }
 }
@@ -411,7 +411,7 @@ keresztül nézem, de attól még a példány `Vadászkutya`;
 
 ```java
 class Main {
-    public static void main() {
+    public static void main(String[] args) {
         Kutya k1 = new Vadaszkutya();
         k1.ugat();
     }
@@ -435,7 +435,7 @@ A fennti példában `k1`:
 
 ```java
 class Main {
-    public static void main() {
+    public static void main(String[] args) {
         Kutya k1 = new Vadaszkutya();
         k1.ugat();
 
@@ -473,8 +473,8 @@ class VadaszKutya extends Kutya {
     }
 }
 
-class Main() {
-    public static void main() {
+class Main {
+    public static void main(String[] args) {
         Kutya k1 = new VadaszKutya();
         System.out.println(k1.ugat());
 //        vau vau vau
