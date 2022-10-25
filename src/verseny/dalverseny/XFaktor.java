@@ -8,7 +8,7 @@ import verseny.Versenyzo;
 import java.util.*;
 
 public class XFaktor implements Verseny {
-    private int evad;
+    private final int evad;
     private ArrayList<Versenyzo> versenyzok = new ArrayList<>();
 
     public XFaktor(int evad, ArrayList<Versenyzo> versenyzok) {

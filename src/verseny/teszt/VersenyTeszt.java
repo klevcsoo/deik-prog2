@@ -6,14 +6,11 @@ import verseny.Verseny;
 import verseny.Versenyzo;
 import verseny.dalverseny.XFaktor;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.lang.reflect.Field;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -88,7 +85,7 @@ public class VersenyTeszt {
             kiirasAllomanyba(exportList, exportUtvonal);
         } catch (IOException e) {
             System.out.println("IO Hiba");
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -96,9 +93,11 @@ public class VersenyTeszt {
             throws IOException {
         for (var v : versenyList) {
             int[] versenyzoCount = v.versenyzokSzama();
-            if (versenyzoCount[1] <= versenyzoCount[0]) continue;
+            if (versenyzoCount[0] >= versenyzoCount[1]) continue;
 
-            Files.writeString(Paths.get(utvonal), v.toString(), StandardCharsets.UTF_8);
+            Files.writeString(Paths.get(utvonal), v.toString(),
+                    StandardCharsets.UTF_8, StandardOpenOption.CREATE
+            );
         }
     }
 }
