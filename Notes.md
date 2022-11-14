@@ -853,8 +853,31 @@ class Kiskutya {
 > A felületre ki van vezetve egy publikus szolgáltatás
 > metódus.
 
-## Kivételkezelés
+## Enumerátorok
 
-## Generikus osztályok
+Ha van olyan változó, amelynek a lehetséges értékei
+előre ismertek, akkor felsorolt típusnak nevezzük. A
+Java-ban ennek a neve `enum`. Ez nyelvi szinten
+támogatva van.
 
-## Konténerek
+## Rekurzív adatszerkezet
+
+Legjobb példája ennek a bináris fa, aminek a bal és a
+jobb oldala is bináris fa.
+**Rekurzív adatszerkezetet rekurzívan kell feldolgozni.**
+
+## NullObject
+
+Azért jó, hogy ne kelljen "null check"-et csinálni.
+Ezt érdemes használni a `null` érték helyett. A
+`NullObject`-nek van funkcionalítása. Ugyan olyan típusú,
+mint az adatszerkezet, de funkcionalitása a semmi.
+`toString`-nél üres `String`-et ad vissza, számként az
+értéke 0.
+
+> #### Feladat:
+> 1. Kiemelem a bináris fa felületét egy absztrakt
+     ősbe vagy interfészbe.
+> 2. A `null` objektumnak a neve lesz `NullBinaryTree`,
+     ami megvalósítja ezt az interfészt.
+> 3. Az interfészt használom, ahol csak lehet.
