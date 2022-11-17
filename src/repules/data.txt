@@ -1,0 +1,14 @@
+R;Boeing;747-8F;76,25;S
+U;Boeing;747-8F;76,20;S;50
+U;Bombardier;Q400;32,81;N;78
+U;Bombardier;Q400;32,81;N;78
+R;Bombardier;Q400;32,00;N
+U;Esse labore;AT6;73,12;N;114
+U;Laborum pariatur;S-4CL;83,13;N;200
+R;Boeing;14PROMAX;48,23;S
+R;Do enim;9AT;83,2;S
+R;Minim laborum;M1MAX;28,4;S
+U;Sit irure;PS4PRO;93,20;N;55
+R;Airbus;FBM1998;45,22;S
+U;Airbus;KHI-2B;94,00;S;80
+U;Airbus;MODEL-X;70,00;N;110
